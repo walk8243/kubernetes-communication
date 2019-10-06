@@ -34,17 +34,3 @@ spec:
           items:
           - key: index.html
             path: index.html
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: service
-  namespace: default
-spec:
-  selector:
-    app: nginx
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
