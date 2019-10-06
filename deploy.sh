@@ -2,8 +2,9 @@
 
 minikube start
 
-kubectl create -f base-client.yaml
-kubectl create -f base-server.yaml
+kubectl create namespace k8s-communication
+kubectl create namespace k8s-communication-sub
 
-kubectl expose deployment nginx --type=LoadBalancer --port=80
-minikube service nginx
+kubectl create -f deploy.yaml
+kubectl expose deployment server --type=LoadBalancer --port=80
+minikube service server

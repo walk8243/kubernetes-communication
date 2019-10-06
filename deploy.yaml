@@ -1,0 +1,87 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: share-doc
+  namespace: k8s-communication
+data:
+  index.html: |
+    Hello World!
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: server
+  namespace: k8s-communication
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        - name: share-files
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: share-files
+        configMap:
+          name: share-doc
+          items:
+          - key: index.html
+            path: index.html
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client-container
+  namespace: k8s-communication
+spec:
+  containers:
+  - name: shell
+    image: centos
+    command:
+    - /bin/sh
+    - "-c"
+    - "-"
+    args:
+    - "while :; do sleep 1000; done"
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client-pod
+  namespace: k8s-communication
+spec:
+  containers:
+  - name: shell
+    image: centos
+    command:
+    - /bin/sh
+    - "-c"
+    - "-"
+    args:
+    - "while :; do sleep 1000; done"
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client-namespace
+  namespace: k8s-communication-sub
+spec:
+  containers:
+  - name: shell
+    image: centos
+    command:
+    - /bin/sh
+    - "-c"
+    - "-"
+    args:
+    - "while :; do sleep 1000; done"
