@@ -1,0 +1,2 @@
+# kubernetes-communication
+kubernetesのコンポーネント間の通信を検証するときのデプロイファイル群
