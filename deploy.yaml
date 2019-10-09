@@ -27,6 +27,19 @@ spec:
         volumeMounts:
         - name: share-files
           mountPath: /usr/share/nginx/html
+        - name: unix-domain-sock
+          mountPath: /var/sock
+      - name: shell
+        image: centos
+        command:
+        - /bin/sh
+        - "-c"
+        - "-"
+        args:
+        - "while :; do sleep 1000; done"
+        volumeMounts:
+        - name: unix-domain-sock
+          mountPath: /var/sock
       volumes:
       - name: share-files
         configMap:
@@ -34,23 +47,8 @@ spec:
           items:
           - key: index.html
             path: index.html
-
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: client-container
-  namespace: k8s-communication
-spec:
-  containers:
-  - name: shell
-    image: centos
-    command:
-    - /bin/sh
-    - "-c"
-    - "-"
-    args:
-    - "while :; do sleep 1000; done"
+      - name: unix-domain-sock
+        emptyDir: {}
 
 ---
 apiVersion: v1
