@@ -9,6 +9,28 @@ data:
     Hello World!
 
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: unix-domain-sock
+  namespace: k8s-communication
+data:
+  socket.conf: |
+    server {
+        listen       unix:/var/sock/nginx.sock;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -27,8 +49,10 @@ spec:
         volumeMounts:
         - name: share-files
           mountPath: /usr/share/nginx/html
-        - name: unix-domain-sock
+        - name: socket-dir
           mountPath: /var/sock
+        - name: socket-file
+          mountPath: /etc/nginx/conf.d
       - name: shell
         image: centos
         command:
@@ -38,7 +62,7 @@ spec:
         args:
         - "while :; do sleep 1000; done"
         volumeMounts:
-        - name: unix-domain-sock
+        - name: socket-dir
           mountPath: /var/sock
       volumes:
       - name: share-files
@@ -47,8 +71,14 @@ spec:
           items:
           - key: index.html
             path: index.html
-      - name: unix-domain-sock
+      - name: socket-dir
         emptyDir: {}
+      - name: socket-file
+        configMap:
+          name: unix-domain-sock
+          items:
+          - key: socket.conf
+            path: socket.conf
 
 ---
 apiVersion: v1
