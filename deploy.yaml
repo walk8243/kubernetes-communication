@@ -18,16 +18,8 @@ data:
   socket.conf: |
     server {
         listen       unix:/var/sock/nginx.sock;
-
-        location / {
-            root   /usr/share/nginx/html;
-            index  index.html index.htm;
-        }
-
-        error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   /usr/share/nginx/html;
-        }
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
     }
 
 ---
@@ -60,7 +52,7 @@ spec:
         - "-c"
         - "-"
         args:
-        - "while :; do sleep 1000; done"
+        - "yum install -y nc; while :; do sleep 1000; done"
         volumeMounts:
         - name: socket-dir
           mountPath: /var/sock
