@@ -12,9 +12,15 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: unix-domain-sock
+  name: nginx-conf
   namespace: k8s-communication
 data:
+  default.conf: |
+    server {
+        listen       80;
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
   socket.conf: |
     server {
         listen       unix:/var/sock/nginx.sock;
@@ -43,7 +49,7 @@ spec:
           mountPath: /usr/share/nginx/html
         - name: socket-dir
           mountPath: /var/sock
-        - name: socket-file
+        - name: nginx-config
           mountPath: /etc/nginx/conf.d
       - name: shell
         image: centos
@@ -65,10 +71,12 @@ spec:
             path: index.html
       - name: socket-dir
         emptyDir: {}
-      - name: socket-file
+      - name: nginx-config
         configMap:
-          name: unix-domain-sock
+          name: nginx-conf
           items:
+          - key: default.conf
+            path: default.conf
           - key: socket.conf
             path: socket.conf
 
