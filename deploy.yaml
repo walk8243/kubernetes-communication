@@ -58,7 +58,7 @@ spec:
         - "-c"
         - "-"
         args:
-        - "dnf install -y nc; while :; do sleep 1000; done"
+        - "while :; do if dnf install -y nc; then break ; fi ; done ; while :; do sleep 1000; done"
         volumeMounts:
         - name: socket-dir
           mountPath: /var/sock
