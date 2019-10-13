@@ -52,7 +52,7 @@ spec:
         - "-c"
         - "-"
         args:
-        - "yum install -y nc; while :; do sleep 1000; done"
+        - "dnf install -y nc; while :; do sleep 1000; done"
         volumeMounts:
         - name: socket-dir
           mountPath: /var/sock
